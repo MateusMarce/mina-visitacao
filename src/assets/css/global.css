@@ -1,25 +1,116 @@
 
 @import url(https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap);
-@font-face {
-    font-family: "mels";
-    src: url('../fonts/Mels-Regular.otf');
+
+
+.j_mina {
+    background-image: url(/src/assets/img/background_minacarvao.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.j_mina .food-card {
+    background: #ffedc20f;
+    padding: 15px;
+    border: solid 1px;
+    border-color: #ffedc24d;
+    box-sizing: border-box;
+    border-radius: 5px;
+    overflow: hidden;
+    -webkit-box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
+    box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
+    -webkit-transition: 0.1s;
+    transition: 0.1s;
+    height: 100%;
+    cursor: pointer;
+}
+.j_mina .food-card:hover {background: #ffedc221; border-color: #ffedc2c2;}
+
+.j_mina .food-card .food-card_content .food-card_title-section .food-card_title {
+    font-size: 20px;
+    color: #ffedc2;
     font-weight: 500;
+    display: block;
+    line-height: 1.3;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-@font-face {
-    font-family: "mels";
-    src: url('../fonts/Mels-Italic.otf');
-    font-weight: 500;
-    font-style: italic;
+
+.j_mina .food-card .food-card_img img {
+    width: 100%;
+    height: 150px;
+    -o-object-fit: cover;
+    object-fit: inherit;
 }
-@font-face {
-    font-family: "garet";
-    src: url('../fonts/Garet-Book.otf');
-    font-weight: 'regular';
+.j_mina .food-card .food-card_content {/*padding: 20px 0px 0px 0px;*/}
+.j_mina .leftMine-card-1 hr {color: #bd913cc7;}
+
+.card-corrige {
+    --bs-card-border-width: 5px;
+    --bs-card-bg: transparent;
 }
-@font-face {
-    font-family: "garet heavy";
-    src: url('../fonts/Garet-Heavy.otf');
-    font-weight: 'bold';
+.vaCor {color:#db1f3e;}
+.roundedRight {border-radius: 0px 6px 6px 0px;}
+
+.linkBut-01 {background-color: rgb(106, 34, 42);transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;}
+.linkBut-01:hover {background-color: rgb(161, 50, 62);}
+
+.bi::before {transform: scaleX(-1);}
+
+.avisoSemcompra {padding: 20px 0;}
+.avisoSemcompra i {margin: 10px 0;font-size: 2.5rem;}
+.avisoSemcompra p {}
+
+/*SCROLLBAR JOTA*/
+::-webkit-scrollbar{width:7px!important;}
+::-webkit-scrollbar-track{border-radius:3px;margin-left:.3rem!important;}
+::-webkit-scrollbar-thumb{background: #a39c8b82!important;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgb(159,171,179)}
+/*FIM - SCROLLBAR JOTA*/
+
+/*LEFT MINE*/
+.j_mina .leftMine {background: #f7f7f0;}
+.j_mina .leftMine-card-1 {border: 0px solid #cba4576e;}
+.j_mina .btn-mine-01 {border: 1px solid #c9a050; color:#c9a050;}
+.j_mina .btn-mine-01:hover {border: 1px solid #c9a050; color:#fff; background:#c9a050;}
+
+.j_mina .leftMine-product {
+    border: 1px solid #cba4576e;
+    padding: 20px;
+    border-radius: 3px;
+    background: #ffffff;
+}
+
+.j_mina .formPag {padding: 15px 0;}
+.j_mina .formPag h5 {padding: 0px 0 5px 0;font-weight: 300;}
+
+.j_mina .formPag .div-btn-input input[type='radio'].btn-input {
+    appearance: none;
+    margin: 0;
+    width: 100%;
+    height: 100px;
+    border-radius: 5px;
+    background-color: #fff;
+    color: rgb(87, 104, 116);
+    transition: all ease-in-out .2s;
+    border: 1px solid #b3b3b3b2;
+    cursor: pointer;
+}
+
+.j_mina .formPag .div-btn-input input[type='radio'].btn-input:checked {
+    appearance: none;
+    margin: 0;
+    border: 2px solid #6a222a;
+    background-color: #f9f6e6;
+    transition: all ease-in-out .2s;
+}
+
+.j_mina .formPag .div-btn-input:has(label.btn-input-label+input[type='radio'].btn-input:checked) label.btn-input-label {
+    color: rgb(106 34 42);
+    fill: rgb(106 34 42);
 }
 
 /*jnew*/
@@ -30,7 +121,6 @@
 @media (max-width: 1330px) {.colList-1 {width: 55%;}.colList-2 {width: 45%;}}
 @media (min-width: 676px) and (max-width: 1024px) {.colList-1 .fw-bold {font-size: 14px;}}
 /* Fim - jnew*/
-
 
 .form-control-borderless {
     border: none;
@@ -54,7 +144,7 @@
 
 .btn-original {
     width:calc(100% - 2rem);
-    background-color:#62a01c;
+    background-color:#009688;
     border: 0;
     border-radius: .325rem;
     padding-top: .5rem;
@@ -63,16 +153,14 @@
 }
 
 .btn-original:hover {
-    filter: contrast(1.3);
+    filter: contrast(2);
 }
 .btn-original:disabled {
     cursor: not-allowed;
-    background-color: #586846;
+    background-color: rgb(104 103 92 / 37%);
 }
-
-.btn-sec:hover {
-    background-color: rgb(245, 245, 245);
-}
+.btn-sec {background-color: white;}
+.btn-sec:hover {background-color: #efefef;}
 
 .badge-custom:after{
     content:attr(data-value);
@@ -88,14 +176,14 @@
     opacity:1;
 }
 .custom-input:has(input:disabled) > p, .custom-input:has(input:disabled) > input {
-    background-color: #bfcfad !important;
+    background-color: #ebe7d1 !important;
 }
 
 
 body {
-    background: #F1F8E9;
-    font-family: "garet", "mels", "roboto", sans-serif;
-    color: #2c5028;
+    background: #e5ecf1;
+    font-family: "roboto", sans-serif;
+    color: #37373f;
 }
 
 ::-webkit-scrollbar {
@@ -301,12 +389,12 @@ a {
     top: 15px;
 }
 .div-btn-input:has(label.btn-input-label+input[type='radio'].btn-input:checked) label.btn-input-label{
-    color: #669432;
-    fill: #669432;
+    color: rgb(25 103 185);
+    fill: rgb(25 103 185);
 }
 .div-btn-input:has(label.btn-input-label+input[type='radio'].btn-input:disabled) label.btn-input-label{
-    fill: rgb(87, 117, 80);
-    color: rgb(87, 117, 80);
+    fill: rgb(87, 104, 116);
+    color: rgb(87, 104, 116);
 }
 
 input[type='radio'].btn-input {
@@ -315,43 +403,25 @@ input[type='radio'].btn-input {
     width: 100%;
     height: 100px;
     border-radius: 20px;
-    background-color: #DCEDC8;
+    background-color: #DAECFC;
     color: rgb(87, 104, 116);
     transition: all ease-in-out .2s;
-    border:2px solid #DCEDC8;
+    border:2px solid #DAECFC;
 }
 input[type='radio'].btn-input:checked {
     appearance: none;
     margin: 0;
-    border:2px solid #669432;
-    background-color: #AED581;
+    border:2px solid rgb(112, 167, 226);
+    background-color: #a2cff9a6;
     transition: all ease-in-out .2s;
 }
 input[type='radio'].btn-input:disabled {
     appearance: none;
     margin: 0;
-    background-color: rgb(153, 189, 145);
+    background-color: rgb(162, 175, 189);
     cursor:pointer;
     transition: all ease-in-out .2s;
-    border:2px solid rgb(87, 117, 80);
-}
-
-.p-float {
-    position: absolute;
-    background-color: white;
-    top:-18px;
-    z-index: 0;
-}
-
-.p-float + input, .p-float + select {
-    position: inherit;
-    z-index: 1;
-}
-
-.p-float + div *, .p-float + div *:focus {
-    outline: 0 !important;
-    border: 0 !important;
-    box-shadow: 0 0 0 black;
+    border:2px solid rgb(138, 145, 161);
 }
 
 @media (min-width: 992px) {

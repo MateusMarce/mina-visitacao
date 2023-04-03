@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import ReactPaginate from "react-paginate"
 import axios from '../api/axios'
 import debounce from 'lodash.debounce'
+import { formatValue } from 'react-currency-input-field'
+import Swal from 'sweetalert2'
 
 interface apoios {
   i_apoio: number
@@ -10,6 +12,8 @@ interface apoios {
   dt_sistema_f: string
   flag: string
   pagamento: string
+  vl_recibo:string
+  pgto_local:string
 }
 
 function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser}:any) {
@@ -30,6 +34,28 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
   const handlePageClick = async (data: any) => {
     let currentPage = data.selected + 1
     await getApoios(currentPage, inputValue)
+  }
+  const handleExcluir = async (id:number) => {
+    try {
+      Swal.fire({
+        title:'Deseja cancelar essa compra?',
+        showCancelButton:true,
+        showConfirmButton:true
+      }).then(async (result)=>{
+        if(result.isConfirmed) {
+          await axios.post('/api/apoio/cancel-recibo', {
+            i_recibo:id,
+            flag:'C'
+          })
+          await getApoios(1)
+        } else if(result.isDismissed) {
+          Swal.close()
+        }
+      })
+      
+    } catch (error) {
+      
+    }
   }
 
   const debouncedCallback = useCallback(
@@ -52,7 +78,7 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
       }
 
     })()
-  }, [])
+  }, [historyUser])
 
   const renderFlag = useCallback((flag: string) => {
     switch(flag) {
@@ -71,10 +97,10 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
     }
   }, []);
 
-  const renderFormaPag = useCallback((pagamento: string) => {
+  const renderFormaPag = useCallback((pagamento: string, pgto:string) => {
     switch(pagamento) {
       case 'S':
-        return 'SATC'
+        return 'SATC' + pgto
 
       case 'D':
         return 'Dinheiro'
@@ -121,7 +147,7 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
                 <th className="text-center">Situação / Forma</th>
                 <th className="text-center">Total</th>
                 <th className="text-center">Data</th>
-                {/* <th className="text-center">Recibo</th> */}
+                <th className="text-center">Recibo</th>
                 <th></th>
               </tr>
             </thead>
@@ -131,15 +157,22 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
                   <th scope="row" className="text-center">{apoio.i_apoio}</th>
                   <td style={{wordBreak:'break-all'}}>{apoio.nome}</td>
                   <td className="text-center">
-                    {renderFlag(apoio.flag)} / {renderFormaPag(apoio.pagamento)}
+                    {renderFlag(apoio.flag)} / {renderFormaPag(apoio.pagamento, apoio.pgto_local)}
                   </td>
-                  <td className="text-center">{apoio.vl_recibo_str}</td>
+                  <td className="text-center">{apoio.pagamento === 'S' ? formatValue({value: apoio.vl_recibo, groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 3}) : apoio.vl_recibo_str}</td>
                   <td className="text-center">{apoio.dt_sistema_f}</td>
                   <td className="text-center">
                     {apoio.flag != 'C' &&
                       <a className="btn btn-sm" target="_blank" href={`${import.meta.env.VITE_API_BASE_URL}/api/apoio/recibo/pdf/${apoio.i_apoio}`} title="Recibo">
                         <i className="bi bi-receipt"></i>
                       </a>
+                    }
+                  </td>
+                  <td>
+                    {pagador?.nome.toUpperCase() === 'MICHELE PAVAN TOMAZI' && apoio.flag != 'C' &&
+                      <button className="btn btn-sm" onClick={()=>{handleExcluir(apoio.i_apoio)}} title="Recibo">
+                        <i className="bi bi-trash3" style={{color: "rgb(230, 65, 92)"}}></i>
+                      </button>
                     }
                   </td>
                 </tr>

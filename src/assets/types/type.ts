@@ -1,36 +1,20 @@
 export interface pagador {
+    cpf: string
     data: string
-    aluno_id: string | number
-    cliente_id: string | number
-    pagamento: number
+    nome: string
+    local: number
+    unidade: number | ''
+    tipo?: string
+    radio:number | string
 }
 
-export interface servicos 
-    {
-        id:string
-        codigo:string
-        nome:string
-        marca: null,
-        modelo: null,
-        descricao:string
-        preco_custo:string
-        preco_venda:string
-        estoque:string
-        controla_estoque:string
-        categoria_id:string
-        tipo:string
-        ativo:string
-        qtd:number|string
-        criado_em: {
-            date:string
-            timezone_type: number,
-            timezone:string
-        },
-        atualizado_em: {
-            date:string
-            timezone_type: number,
-            timezone:string
-        },
-        apagado_em: null
-    }
+export interface servicos {
+    qtd_serv: number | string
+    i_servico: number
+    qtdUnitarios: string
+    nome: string
+    valor: number
+    valor_custo: number
+    qtd: number | string
+}
   

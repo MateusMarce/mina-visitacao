@@ -1,12 +1,12 @@
 {
-  "name": "mina-de-visitacao",
+  "name": "apoio",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build-dev": "tsc && vite build",
+    "build": "tsc && vite build --base=/apoio/",
+    "build-dev": "tsc && vite build --base=/apoio-dev/",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,10 +26,13 @@
     "react-select": "^5.7.0",
     "react-text-mask": "^5.5.0",
     "react-toastify": "^9.1.1",
+    "semver": "^7.3.8",
+    "sweetalert2": "^11.7.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.7",
+    "@types/node": "^18.13.0",
     "@types/react": "^18.0.24",
     "@types/react-dom": "^18.0.8",
     "@types/react-toastify": "^4.1.0",
