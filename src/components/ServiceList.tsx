@@ -36,7 +36,7 @@ function ServiceList({item, setServicosCart, servicosCart, paymentCheck}:any) {
             }
             
             return item
-        }).filter((item:servicos) => item.qtd >= 0))
+        }).filter((item:servicos) => Number(item.qtd) >= 0))
     }
     const HandleExcluir = (servico: servicos) => {
         setServicosCart(servicosCart.map((item:servicos) => {
@@ -45,19 +45,15 @@ function ServiceList({item, setServicosCart, servicosCart, paymentCheck}:any) {
             }
             
             return item
-        }).filter((item:servicos) => item.qtd >= 0))
+        }).filter((item:servicos) => Number(item.qtd) >= 0))
     }
     
     return (
         <div className='d-flex mb-2 overflow-hidden'>
-            <div className="leftMine-product d-flex justify-content-between align-items-center">
+            <div className="leftMine-product w-100 d-flex justify-content-between align-items-center">
                 <div className="colList-1 px-2">
                     <div className='fw-bold'>{item?.nome}</div>
-                    {paymentCheck === 0 ? 
-                        <small className='text-secondary'>R$ {item.valor_custo.toFixed(3).replace(".", ",")}</small>
-                        :
-                        <small className='text-secondary'>R$ {item.valor.toFixed(2).replace(".", ",")}</small>
-                    }
+                    <small className='text-secondary'>R$ {item.valor.toFixed(2).replace(".", ",")}</small>
                 </div>
                 
                 <div className="colList-2 input-group shadow-sm" style={{flex:1, minWidth:20}}>

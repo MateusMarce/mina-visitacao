@@ -33,24 +33,15 @@ function ModalCart({setDetailsCart, list, total, paymentCheck}: any) {
                   <th scope="row" className="text-center">{item.i_servico}</th>
                   <td>{item.nome}</td>
                   <td className="text-center">{item.qtd}</td>
-                  {paymentCheck === 0 ?
-                    <>
-                      <td className="text-center">{item.valor_custo.toFixed(3)}</td>
-                      <td style={{ textAlign: 'right' }}>{(item.valor_custo * item.qtd).toFixed(3)}</td>
-                    </>
-                    :
-                    <>
-                      <td className="text-center">{item.valor.toFixed(2)}</td>
-                      <td style={{ textAlign: 'right' }}>{(item.valor * item.qtd).toFixed(2)}</td>
-                    </>
-                  }
+                  <td className="text-center">{item.valor.toFixed(2)}</td>
+                  <td style={{ textAlign: 'right' }}>{(item.valor * item.qtd).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="table-light">
                 <td>Total:</td>
-                <td colSpan={4} style={{ textAlign: 'right' }}>R$ {Number(total).toFixed(paymentCheck === 0 ? 3 : 2)}</td>
+                <td colSpan={4} style={{ textAlign: 'right' }}>R$ {Number(total).toFixed(2)}</td>
               </tr>
             </tfoot>
           </table>

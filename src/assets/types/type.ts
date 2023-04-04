@@ -1,10 +1,7 @@
 export interface pagador {
     cpf: string
-    data: string
+    email: string
     nome: string
-    local: number
-    unidade: number | ''
-    tipo?: string
     radio:number | string
 }
 

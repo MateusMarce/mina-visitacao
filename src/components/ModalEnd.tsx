@@ -17,8 +17,7 @@ function ModalEnd({
   setPaymentCheck,
   formikForm, 
   setDevedor, 
-  setCodeSearch,
-  menuValue
+  setCodeSearch
 }:any) {
     const [troco, setTroco] = useState<string>('')
     const [timer, setTimer] = useState<number | undefined>()
@@ -85,141 +84,51 @@ function ModalEnd({
           flag: 'A',
           pagamento: 'P'
       }
-      switch (pay) {
-        case 'PIX':
-          setCancel(true)
-          //apenas quando nao estiver monitorando, deve fazer a requisicao do pamento
-          if(!cancel) {
-            try {
-              let valor = formatValue({value: (devedor > 0 ? Number(total) + devedor : Number(total)).toString(), decimalSeparator: '.', decimalScale: 2})
-              apoio_user = {...apoio_user, vl_recibo:valor, vl_dinheiro: valor, cpf_cnpj:pagador.cpf.replaceAll('.','').replace('-',''), vl_troco:'0.00'}
-              var res = await axios.post('api/apoio/novo-atendimento', apoio_user)
-              handleInterval(res.data.i_apoio)
-              window.open(`${import.meta.env.VITE_API_BASE_URL_PIX}/apoio?valor=${valor}&nome=${pagador.nome}&cpf_cnpj=${pagador.cpf.replaceAll('.','').replace('-','')}&origem=${pagador.local}&i_apoio=${res.data.i_apoio}`, '_blank')
-              
-            } catch (error) {
-              
-            }
-          }
-          if(cancel) {
-            setEnd(false)
-            setDevedor(0)
-            setCodeSearch('')
-            setServicosCart([])
-            setPaymentCheck(null)
-            setTimer(0)
-            clearInterval(timer)
-          }
-          break
-
-        case 'SATC':
-          try {
-            apoio_user = {...apoio_user, 
-              pagamento: 'S', 
-              flag: 'P',
-              vl_recibo: (Number(total)).toFixed(3),
-              vl_dinheiro: (Number(total)).toFixed(3),
-              vl_troco:"0.00"
-            }
-            console.log(apoio_user);
-            
-            var res = await axios.post('api/apoio/novo-atendimento', apoio_user)
-            setEnd(false)
-            setDevedor(0)
-            setCodeSearch('')
-            toast.success('Venda finalizada com sucesso!')
-            setServicosCart([])
-            setPaymentCheck(null)
-          } catch (e) {
-            toast.error('Erro ao concluir venda!')
-          }
-          break
-
-        case 'dinheiro':
-          apoio_user = {
-            ...apoio_user,
-            vl_troco: (parseFloat(troco.replace(',','.') || '0') - (devedor != 0 ? Number(total) + devedor : Number(total))).toFixed(2),
-            vl_dinheiro: parseFloat(troco.replaceAll(',', '.')),
-            pagamento: 'D',
-            flag: 'P'
-          }
-          try {
-            var res = await axios.post('api/apoio/novo-atendimento', apoio_user)
-            setEnd(false)
-            setDevedor(0)
-            setCodeSearch('')
-            toast.success('Venda finalizada com sucesso!')
-            setServicosCart([])
-            setPaymentCheck(null)
-          } catch (e) {
-            toast.error('Erro ao concluir venda!')
-          }
-          break
-
-        case 'conta':
-          apoio_user = {
-            ...apoio_user,
-            vl_recibo: (Number(total)).toFixed(2),
-            vl_dinheiro: (Number(total)).toFixed(2),
-            pagamento: 'C',
-            flag: 'A',
-            vl_troco:"0.00"
-          }
-          try {
-            var res = await axios.post('api/apoio/novo-atendimento', apoio_user)
-            setEnd(false)
-            setDevedor(0)
-            setCodeSearch('')
-            toast.success('Venda finalizada com sucesso!')
-            setServicosCart([])
-            setPaymentCheck(null)
-          } catch (e) {
-            toast.error('Erro ao concluir venda!')
-          }
-          break
-      }
       formikForm.current?.resetForm()
     }
 
     switch (mode) {
         case 0:
-            pay = 'SATC'
-            break
-        case 1:
-            pay = 'dinheiro'
-            break
-        case 2:
             pay = 'PIX'
             break
+        case 1:
+            pay = 'Crédito'
+            break
+        case 2:
+            pay = 'Débito'
+            break
         case 3:
-            pay = 'conta'
+            pay = 'Dinheiro'
     }
-
-    console.log(pagador);
+    const ShowIcon = (name:string) => {
+      switch (name) {
+        case 'Crédito':
+          return<i className="bi bi-credit-card d-flex justify-content-center fs-1"></i>
+        case 'PIX':
+          return<i className="bi bi-qr-code d-flex justify-content-center fs-1"></i>
+        case 'Débito':
+          return<i className="bi bi-credit-card-fill d-flex justify-content-center fs-1"></i>
+        case 'Dinheiro':
+          return<i className="bi bi-cash d-flex justify-content-center fs-1"></i>
+      
+        default:
+          break;
+      }
+    }
     
 
     return (
         <div className="w-100 h-100 d-flex justify-content-center align-items-center" style={{position:'absolute', top:0, zIndex:999, backgroundColor:'rgba(0,0,0,0.2)'}}>
-            <div style={{width:500, backgroundColor:'white'}} className='shadow-lg rounded-5 row py-3' >
-                <div className="d-flex pt-2 justify-content-end" style={{height:50}}>
+            <div style={{width:500, backgroundColor:'white'}} className='shadow-lg rounded-4 row py-3' >
+                <div className="d-flex justify-content-end" style={{height:50}}>
                     <button className="btn btn-white" onClick={()=>setEnd(false)}><i className="bi bi-x-lg"></i></button>
                 </div>
                 <div className="px-4">
                     <div className="row mb-4">
-                        {pay == 'PIX' && <i className="bi bi-qr-code fs-1 d-flex justify-content-center"></i>}
-                        {pay == 'dinheiro' && <i className="bi bi-cash-stack fs-1 d-flex justify-content-center"></i>}
-                        {pay == 'conta' && <i className="bi bi-wallet2 fs-1 d-flex justify-content-center"></i>}
-                        {pay == 'SATC' && <i className="ico-satc"></i>}
+                        {ShowIcon(pay)}
                         
-                        <h5 className="d-flex justify-content-center mt-3" style={{fontSize:18}}>Pagamento {mode === 1 ? 'em': 'por'} {pay}</h5>
-                        {pay == 'SATC' ?
-                          <h4 className="d-flex justify-content-center" style={{fontSize:30}}>{formatValue({value: total, groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 3})}</h4>
-                          :
+                        <h5 className="d-flex justify-content-center mt-3" style={{fontSize:18}}>Pagamento: {pay}</h5>
                           <h4 className="d-flex justify-content-center" style={{fontSize:30}}>{formatValue({value: (devedor > 0 ? Number(total) + devedor : Number(total)).toFixed(2), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</h4>
-                        }
-                    </div>
-                    <div className="d-flex justify-content-between">
-                        <p className="mb-1">{menuValue.label} - {menuValue.value}</p>
                     </div>
                     <div className="d-flex justify-content-between border-bottom mb-2">
                         <p className="mb-1">{pagador.nome}</p>
@@ -236,49 +145,18 @@ function ModalEnd({
                             <p className="col-sm-1 mb-0" style={{fontSize:14}}>{k+1}</p>
                             <p style={{flex:1, margin:0, fontSize:14}}>{i.nome}</p>
                             <p className="col-sm-1 mb-0 text-center">{i.qtd}</p>
-                            {pay == 'SATC' ? 
-                              <p className="col-sm-3 mb-1 text-end">{formatValue({value: (i.valor_custo * Number(i.qtd)).toString(), groupSeparator: '.', decimalSeparator: ',', decimalScale: 3})}</p>
-                              :
                               <p className="col-sm-3 mb-1 text-end">{formatValue({value: (i.valor * Number(i.qtd)).toString(), groupSeparator: '.', decimalSeparator: ',', decimalScale: 2})}</p>
-                            }
                         </div>
                     ))}
-                        <div className="d-flex justify-content-between mt-2">
-                            <p className="m-0">TOTAL ITEM</p>
-                            <p className="m-0">{formatValue({value: total.toString(), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ '})}</p>
-                        </div>
                     <div className="border-top mt-2">
-
-
-                        {devedor > 0 && pay != 'SATC' &&
-                          <>
-                            <div className="d-flex justify-content-between mt-2">
-                                <p className="m-0">SALDO DEVEDOR</p>
-                                <p className="m-0">{formatValue({value: devedor.toString(), groupSeparator: '.', decimalSeparator: ',', prefix: '+ R$ ', decimalScale: 2})}</p>
-                            </div>
-                            <div className={`d-flex justify-content-between mb-2`}>
-                                <p className="m-0">TOTAL</p>
-                                <p className="m-0">{formatValue({value: (Number(total) + devedor).toFixed(2), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</p>
-                            </div>
-                          </>
-                        }
-
-                        {pay != "SATC" && devedor === 0 && 
-                          <div className={`d-flex justify-content-between my-2`}>
-                            <p className="m-0">TOTAL</p>
-                            <p className="m-0">{formatValue({value: (Number(total)).toFixed(2), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</p>
-                          </div>
-                        }
-                        {pay == "SATC" && 
-                          <div className='d-flex justify-content-between mb-2 mt-2'>
-                              <p className="m-0">TOTAL</p>
-                              <p className="m-0">{formatValue({value: (Number(total)).toFixed(3), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 3})}</p>
-                          </div>
-                        }
+                      <div className={`d-flex justify-content-between my-2`}>
+                        <p className="m-0">TOTAL</p>
+                        <p className="m-0">{formatValue({value: (Number(total)).toFixed(2), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</p>
+                      </div>
                     </div>
 
 
-                    {pay == 'dinheiro' &&
+                    {pay == 'Dinheiro' &&
                       <>
                         <div className="d-flex justify-content-between mt-2 align-items-center border-top">
                             <p className="m-0">DINHEIRO</p>
@@ -306,30 +184,30 @@ function ModalEnd({
                 {/* botao */}
                 <div>
                   {(pay == 'PIX' && !cancel) && <button
-                    className="btn-original rounded-4 mx-2 text-white mt-2 py-3"
+                    className="btn-original rounded-2 mx-2 text-white mt-2 py-3"
                     style={{width:'calc(100% - 1rem)'}}
                     onClick={handleClickFinalizar}
                   >
                       PAGAR COM QR CODE
                   </button>}
                   {(pay == 'PIX' && cancel) && <button
-                    className="btn btn-secondary rounded-4 mx-2 text-white mt-2 py-3"
+                    className="btn btn-secondary rounded-2 mx-2 text-white mt-2 py-3"
                     style={{width:'calc(100% - 1rem)'}}
                     onClick={handleClickFinalizar}
                   >
                       CANCELAR VENDA
                   </button>}
 
-                  {(pay == 'SATC' || pay == 'conta') && <button
-                    className="btn-original rounded-4 mx-2 text-white mt-2 py-3"
+                  {(pay == 'Débito' || pay == 'Crédito') && <button
+                    className="btn-original rounded-2 mx-2 text-white mt-2 py-3"
                     style={{width:'calc(100% - 1rem)'}}
                     onClick={handleClickFinalizar}
                   >
                       CONCLUIR VENDA
                   </button>}
 
-                  {pay == 'dinheiro' && <button
-                    className="btn-original rounded-4 mx-2 text-white mt-2 py-3"
+                  {pay == 'Dinheiro' && <button
+                    className="btn-original rounded-2 mx-2 text-white mt-2 py-3"
                     style={{width:'calc(100% - 1rem)'}}
                     onClick={handleClickFinalizar}
                     disabled={(parseFloat(troco.replace(',','.') || '0') - (devedor > 0 ? Number(total) + devedor : 0)) < 0}

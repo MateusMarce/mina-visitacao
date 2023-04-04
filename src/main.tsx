@@ -8,13 +8,9 @@ const key = location.pathname.split('/')[3]
 
 
 
-if(key !== 'APOIOCE986ZE7PVE5DAT01Z589FYRI'){
-  location.href = '/unauthorized.'
-} else {
   ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
         <App />
     </React.StrictMode>
   )
   
-}
