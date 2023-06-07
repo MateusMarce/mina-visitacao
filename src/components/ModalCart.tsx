@@ -1,12 +1,5 @@
-interface servicos {
-    qtd_serv: number
-    i_servico: number
-    qtdUnitarios: string
-    nome: string
-    valor: number
-    valor_custo: number
-    qtd: number
-}
+import { formatValue } from "react-currency-input-field"
+import { servicos } from "../assets/types/type"
 
 function ModalCart({setDetailsCart, list, total, paymentCheck}: any) {
   return (
@@ -28,20 +21,23 @@ function ModalCart({setDetailsCart, list, total, paymentCheck}: any) {
               </tr>
             </thead>
             <tbody>
-              {list.map((item: servicos) => (
-                <tr key={item.i_servico}>
-                  <th scope="row" className="text-center">{item.i_servico}</th>
-                  <td>{item.nome}</td>
+              {list.map((item: servicos, k: number) => (
+                <tr key={k}>
+                  <th scope="row" className="text-center">{k+1}</th>
+                  <td>{item.descricao}</td>
                   <td className="text-center">{item.qtd}</td>
-                  <td className="text-center">{item.valor.toFixed(2)}</td>
-                  <td style={{ textAlign: 'right' }}>{(item.valor * item.qtd).toFixed(2)}</td>
+                  <td className="text-center">{formatValue({value: (item.vl_ingresso).toFixed(2), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</td>
+                  <td className="text-center">{formatValue({value: (item.vl_ingresso * item.qtd).toFixed(2), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
               <tr className="table-light">
-                <td>Total:</td>
-                <td colSpan={4} style={{ textAlign: 'right' }}>R$ {Number(total).toFixed(2)}</td>
+                <td className="text-center">Total:</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td className="text-center">{formatValue({value: total.toString(), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</td>
               </tr>
             </tfoot>
           </table>

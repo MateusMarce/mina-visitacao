@@ -4,28 +4,19 @@ import axios from '../api/axios'
 import debounce from 'lodash.debounce'
 import { formatValue } from 'react-currency-input-field'
 import Swal from 'sweetalert2'
+import { historico } from '../assets/types/type'
 
-interface apoios {
-  i_apoio: number
-  nome: string
-  vl_recibo_str: string
-  dt_sistema_f: string
-  flag: string
-  pagamento: string
-  vl_recibo:string
-  pgto_local:string
-}
 
 function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser}:any) {
   const [pageCount, setpageCount] = useState(0)
-  const [items, setItems] = useState<Array<apoios>>([])
+  const [items, setItems] = useState<Array<historico>>([])
   const [search, setSearch] = useState<string>('')
   const [inputValue, setInputValue] = useState<string>('')
   const inputSearch = useRef<HTMLInputElement>(null)
   const limit = 10
 
   const getApoios = async (currentPage: number = 1, search: string = '') => {
-    let res = await axios.get(`/api/apoio/historico?page=${currentPage}&limit=${limit}&search=${search}`)
+    let res = await axios.get(`historico?page=${currentPage}&limit=${limit}&search=${search}`)
     setpageCount(Math.ceil(res.data.total / limit))
     setItems(res.data.itens)
     setItems(res.data.itens)
@@ -97,10 +88,10 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
     }
   }, []);
 
-  const renderFormaPag = useCallback((pagamento: string, pgto:string) => {
+  const renderFormaPag = useCallback((pagamento: string) => {
     switch(pagamento) {
-      case 'S':
-        return 'SATC' + pgto
+      case 'T':
+        return 'Débito'
 
       case 'D':
         return 'Dinheiro'
@@ -109,7 +100,7 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
         return 'PIX'
 
       case 'C':
-        return 'Conta'
+        return 'Crédito'
 
       default:
         return null;
@@ -152,29 +143,30 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
               </tr>
             </thead>
             <tbody>
-              {items.map(apoio => (
-                <tr key={apoio.i_apoio}>
-                  <th scope="row" className="text-center">{apoio.i_apoio}</th>
-                  <td style={{wordBreak:'break-all'}}>{apoio.nome}</td>
+              {items.map(mina => (
+                <tr key={mina.id}>
+                  <th scope="row" className="text-center">{mina.id}</th>
+                  <td style={{wordBreak:'break-all'}}>{mina.nome}</td>
                   <td className="text-center">
-                    {renderFlag(apoio.flag)} / {renderFormaPag(apoio.pagamento, apoio.pgto_local)}
+                    {renderFlag(mina.flag)} / {renderFormaPag(mina.pagamento)}
                   </td>
-                  <td className="text-center">{apoio.pagamento === 'S' ? formatValue({value: apoio.vl_recibo, groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 3}) : apoio.vl_recibo_str}</td>
-                  <td className="text-center">{apoio.dt_sistema_f}</td>
+                  <td>{mina.vl_pago}</td>
+                  {/* <td className="text-center">{formatValue({value: mina.vl_pago, groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</td> */}
+                  <td className="text-center">{mina.dt_sistema_f}</td>
                   <td className="text-center">
-                    {apoio.flag != 'C' &&
-                      <a className="btn btn-sm" target="_blank" href={`${import.meta.env.VITE_API_BASE_URL}/api/apoio/recibo/pdf/${apoio.i_apoio}`} title="Recibo">
+                    {mina.flag != 'C' &&
+                      <a className="btn btn-sm" target="_blank" href={`${import.meta.env.VITE_API_BASE_URL}/recibo/pdf/${mina.id}`} title="Recibo">
                         <i className="bi bi-receipt"></i>
                       </a>
                     }
                   </td>
-                  <td>
+                  {/* <td>
                     {pagador?.nome.toUpperCase() === 'MICHELE PAVAN TOMAZI' && apoio.flag != 'C' &&
                       <button className="btn btn-sm" onClick={()=>{handleExcluir(apoio.i_apoio)}} title="Recibo">
                         <i className="bi bi-trash3" style={{color: "rgb(230, 65, 92)"}}></i>
                       </button>
                     }
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

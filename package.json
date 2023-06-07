@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --base=/apoio/",
-    "build-dev": "tsc && vite build --base=/apoio-dev/",
+    "build": "tsc && vite build --base=/mina/",
+    "build-dev": "tsc && vite build --base=/mina-dev/",
     "preview": "vite preview"
   },
   "dependencies": {

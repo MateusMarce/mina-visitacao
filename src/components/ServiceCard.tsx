@@ -1,34 +1,36 @@
 import { useState, useEffect } from 'react'
+import { servicos } from '../assets/types/type'
+import axios from '../api/axios'
+import { version } from '../../package.json'
+import { toast } from 'react-toastify'
 
-interface servicos {
-    qtd_serv: number
-    i_servico: number
-    qtdUnitarios: string
-    nome: string
-    valor: number
-    valor_custo:number
-    qtd: number | string
-  }
+function ServiceCard({servico, setServicosCart, servicosCart}:any) {
 
-function ServiceCard({servico, setServicosCart, servicosCart, setSearch}:any) {
-
-    const handleClickAddItemCart = (servico: servicos) => {
-        let add = true
-        let servicos = servicosCart.map((item:servicos) => {
-            if (item.i_servico == servico.i_servico) {
-                add = false
-                // item.qtd += servico.qtd
-                item.qtd = (Number(item.qtd) + 1).toFixed(2)
-            }    
+    const handleClickAddItemCart = async (servico: servicos) => {
+        try {
+            let res = await axios.get(`versao/1/${version}`)
+            if(!res.data.status){
+                let add = true
+                let servicos = servicosCart.map((item:servicos) => {
+                    if (item.id == servico.id) {
+                        add = false
+                        // item.qtd += servico.qtd
+                        if(item.qtd < item.qtde_maxima) item.qtd = (Number(item.qtd) + 1)
+                    }    
+                    return item
+                    
+                })
+                
+                if (add) {
+                    setServicosCart((current:any) => [...current, {...servico, qtd: 1}])
+                } else {
+                    setServicosCart(servicos)
+                }
+            } else {
+                toast.error(`Seu sistema tem uma nova versão dispoível. Recarregue a página com CTRL+F5.`, {position:'top-center'})
+            }
+        } catch (error) {
             
-            return item
-        })
-        
-        if (add) {
-            setServicosCart((current:any) => [...current, {...servico, qtd: '1.00'}])
-            setSearch('')
-        } else {
-            setServicosCart(servicos)
         }
     }
 
@@ -41,14 +43,17 @@ function ServiceCard({servico, setServicosCart, servicosCart, setSearch}:any) {
                     <a href="#!"><i className="far fa-heart"></i></a>
                 </div> 
                 <div className="food-card_content col">
-                    <div className="food-card_title-section" title={servico.nome}>
-                        <div className="food-card_title">{servico.nome}</div>
+                    <div className="food-card_title-section" title={servico.descricao}>
+                        <div className="food-card_title">{servico.descricao}</div>
                     </div>
                     <div className="food-card_bottom-section">
                         <hr className='mt-1 mb-1' style={{borderColor:'#ffedc24d'}}/>
                         <div className="row justify-conten-between">
                             <div className="food-card_price text-white mt-1">
-                                <span>R$ {servico.valor.toFixed(2).replace(".", ",")}</span>
+                                <span>R$ {servico.vl_ingresso.toFixed(2).replace(".", ",")}</span>
+                            </div>
+                            <div className="food-card_price text-white mt-1">
+                                <span>Máx.: {servico.qtde_maxima} unidades </span>
                             </div>
                         </div>
                     </div>

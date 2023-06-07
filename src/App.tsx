@@ -1,21 +1,19 @@
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'react-toastify/dist/ReactToastify.css'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from './api/axios'
 import ModalEnd from './components/ModalEnd'
 import ModalHistory from './components/ModalHistory'
 import PaymentCard from './components/PaymentCard'
 import ServiceCard from './components/ServiceCard'
 import ServiceList from './components/ServiceList'
-import { ToastContainer, toast } from 'react-toastify'
-import { Formik, Form, useField, Field, FormikValues } from 'formik'
+import { ToastContainer } from 'react-toastify'
+import { Formik, Form, useField, Field } from 'formik'
 import Feedback from 'react-bootstrap/Feedback'
 import * as Yup from 'yup'
 import ModalCart from './components/ModalCart'
 import { formatValue } from 'react-currency-input-field'
-import debounce from 'lodash.debounce';
 import { pagador, servicos } from './assets/types/type'
-import Select from 'react-select'
 import MaskedInput from "react-text-mask";
 import handleCpfCnpjChange from './components/HandleCpfCnpjChange'
 
@@ -31,18 +29,14 @@ const validation = Yup.object().shape({
 function App() {
   const [end, setEnd] = useState<boolean>(false)
   const [history, setHistory] = useState<boolean>(false)
-  const [historyUser, setHistoryUser] = useState<boolean>(false)
   const [detailsCart, setDetailsCart] = useState<boolean>(false)
   const [servicos, setServicos] = useState<servicos[]>([])
   const [servicosCart, setServicosCart] = useState<servicos[]>([])
-  const [search, setSearch] = useState<string>('')
-  const [total, setTotal] = useState<number | string>(0)
+  const [total, setTotal] = useState<number>(0)
   const [devedor, setDevedor] = useState<number>(0)
   const [pagador, setPagador] = useState<pagador>()
   const [paymentCheck, setPaymentCheck] = useState<number | null>(null)
   const [codeSearch, setCodeSearch] = useState<string>('')
-  const [menuValue, setMenuValue] = useState<{value:number|string, label:string}>({value:0, label:''})
-  const inputSearch = useRef<HTMLInputElement>(null)
   const formikForm = useRef(null)
   const lista = [
     {nome:'PIX'},
@@ -54,9 +48,7 @@ function App() {
 
   useEffect(() => {
     (async () => {
-      inputSearch.current?.focus()
-
-      let res = await axios.get('/api/apoio/servicos')
+      let res = await axios.get('/ingressos')
       setServicos(res.data)
     })()
   }, [])
@@ -66,9 +58,9 @@ function App() {
   useEffect(() => {
     let total = 0
     
-    total = servicosCart.map(item => item.valor * Number(item.qtd)).reduce((sum, a) => sum + a, 0)
-    setTotal(Number(total).toFixed(3))
-  }, [servicosCart, paymentCheck])
+    total = servicosCart.map(item => item.vl_ingresso * item.qtd).reduce((sum, a) => sum + a, 0)
+    setTotal(total)
+  }, [servicosCart])
 
 
 
@@ -94,8 +86,6 @@ function App() {
           initialValues={{ nome: '', cpf: '', email:'', radio:''}}
           validationSchema={validation}
           onSubmit={(values: pagador, { setSubmitting }) => {
-            // let cpf = values.cpf.replaceAll('.','').replace('-','')
-            // setPagador({...values, cpf})
             setPagador(values)
             setEnd(true)
             setSubmitting(false)
@@ -107,7 +97,7 @@ function App() {
             <div className="row" style={{height:'100vh'}}>
 
               {/* left */}
-              <div className="col-sm-12 col-md-6 col-lg-7 col-xl-7 pe-3" style={{height:'100%', overflow:'hidden'}}>
+              <div className="col-sm-12 col-md-6 col-lg-8 col-xl-8 pe-3" style={{height:'100%', overflow:'hidden'}}>
 
                 {/* search */}
                 {/* <div className="row m-3" style={{height:70}}>
@@ -138,13 +128,12 @@ function App() {
                 {/* itens */}
                 <div className='px-4' style={{overflow:'auto', height:'calc(100% - 100px)'}}>
                   <div className="row row-cols-xl-2 row-cols-lg-1 row-cols-md-1 row-cols-sm-1 row-cols-1 ">
-                    {servicos.filter(e =>  e.nome?.toLowerCase().includes(search.toLowerCase())).map(servico => (
+                    {servicos.map(servico => (
                         <ServiceCard
-                          key={servico.i_servico}
+                          key={servico.id}
                           servico={servico}
                           setServicosCart={setServicosCart}
                           servicosCart={servicosCart}
-                          setSearch={setSearch}
                         />
                     ))}
                   </div>
@@ -153,7 +142,7 @@ function App() {
               </div>
 
               {/* right */}
-              <div className="leftMine col-sm-12 col-md-6 col-lg-5 col-xl-5" style={{height:'100vh', overflowY:'auto'}}>              
+              <div className="leftMine col-sm-12 col-md-6 col-lg-4 col-xl-4" style={{height:'100vh', overflowY:'auto'}}>              
 
                 {/* mid cart */}
                 <div className="col" >
@@ -278,7 +267,7 @@ function App() {
                       style={{fontFamily:'Raleway'}}
                       type='submit' 
                       onClick={()=>submitForm()} 
-                      disabled={paymentCheck === null || (Number(total) + devedor) === 0}
+                      disabled={paymentCheck === null || servicosCart.length === 0}
                     >
                       FINALIZAR COMPRA
                     </button>
@@ -305,14 +294,10 @@ function App() {
           formikForm={formikForm}
           setDevedor={setDevedor}
           setCodeSearch={setCodeSearch}
-          menuValue={menuValue}
         />
       )}
       {history &&
         <ModalHistory setHistory={setHistory} history={history} pagador={pagador} />
-      }
-      {historyUser &&
-        <ModalHistory setHistoryUser={setHistoryUser} historyUser={historyUser} pagador={pagador} />
       }
       {detailsCart &&
         <ModalCart setDetailsCart={setDetailsCart} list={servicosCart} total={total} paymentCheck={paymentCheck} />

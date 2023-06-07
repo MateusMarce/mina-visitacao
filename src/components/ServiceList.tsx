@@ -4,56 +4,62 @@ import { servicos } from '../assets/types/type'
 
 
 function ServiceList({item, setServicosCart, servicosCart, paymentCheck}:any) {
-    const [qtd, setQtd] = useState<string>(item.qtd)
+    const [qtd, setQtd] = useState<number>(item.qtd)
 
 
     useEffect(()=>{
         setQtd(item.qtd)
     },[item.qtd])
 
-    const handleDigitarValor = (servico: servicos, value: string) => {
-        setQtd(value)
+    const handleDigitarValor = (servico: servicos, value: number) => {
         setServicosCart(servicosCart.map((item:servicos) => {
-            
-            if (item.i_servico == servico.i_servico) item.qtd = value
+            if (item.id == servico.id) {
+                if(value) {
+                    item.qtd = Number(value) > item.qtde_maxima ? item.qtde_maxima : value
+                } else {
+                    item.qtd = 1
+                }
+            }
             return item
         }))
     }
     const HandleClicarBotao = (action: string, servico: servicos) => {
         setServicosCart(servicosCart.map((item:servicos) => {
-            if (item.i_servico == servico.i_servico) {
+            if (item.id == servico.id) {
                 switch (action) {
                     case '-':
-                        item.qtd = (Number(parseFloat(qtd)) - 1.00).toFixed(2)
-                        setQtd((Number(parseFloat(qtd)) - 1.00).toFixed(2))
+                        item.qtd = (qtd - 1)
+                        setQtd((qtd - 1))
                     break
                     
                     case '+':
-                        item.qtd = (Number(parseFloat(qtd)) + 1.00).toFixed(2)
-                        setQtd((Number(parseFloat(qtd)) + 1.00).toFixed(2))
+                        if(item.qtd < item.qtde_maxima){
+                            item.qtd = (qtd + 1)
+                            setQtd((qtd + 1))
+                        }
                     break
                 }
             }
             
             return item
-        }).filter((item:servicos) => Number(item.qtd) >= 0))
+        }).filter((item:servicos) => Number(item.qtd) >= 1))
     }
     const HandleExcluir = (servico: servicos) => {
         setServicosCart(servicosCart.map((item:servicos) => {
-            if (item.i_servico == servico.i_servico) {
-                item.qtd = (-1).toFixed(2)
+            if (item.id == servico.id) {
+                item.qtd = -1
             }
             
             return item
-        }).filter((item:servicos) => Number(item.qtd) >= 0))
+        }).filter((item:servicos) => Number(item.qtd) >= 1))
     }
     
     return (
         <div className='d-flex mb-2 overflow-hidden'>
             <div className="leftMine-product w-100 d-flex justify-content-between align-items-center">
                 <div className="colList-1 px-2">
-                    <div className='fw-bold'>{item?.nome}</div>
-                    <small className='text-secondary'>R$ {item.valor.toFixed(2).replace(".", ",")}</small>
+                    <div className='fw-bold'>{item?.descricao}</div>
+                    <small className='text-secondary'>R$ {parseFloat(item.vl_ingresso).toFixed(2).replace(".", ",")}</small>
                 </div>
                 
                 <div className="colList-2 input-group shadow-sm" style={{flex:1, minWidth:20}}>
@@ -65,10 +71,7 @@ function ServiceList({item, setServicosCart, servicosCart, paymentCheck}:any) {
                     <Currency2
                         name="item-input"
                         className='form-control px-0 form-control-sm text-center border-0'
-                        
                         defaultValue={1000}
-                        decimalsLimit={2}
-                        decimalScale={2}
                         decimalSeparator={'.'}
                         groupSeparator={','}
                         disableGroupSeparators={true}
