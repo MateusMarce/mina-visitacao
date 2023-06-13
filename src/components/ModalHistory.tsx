@@ -150,8 +150,8 @@ function ModalHistory({setHistory, pagador, setHistoryUser, history, historyUser
                   <td className="text-center">
                     {renderFlag(mina.flag)} / {renderFormaPag(mina.pagamento)}
                   </td>
-                  <td>{mina.vl_pago}</td>
-                  {/* <td className="text-center">{formatValue({value: mina.vl_pago, groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</td> */}
+                  {/* <td>{mina.vl_pago}</td> */}
+                  <td className="text-center">{formatValue({value: mina.vl_pago?.toString(), groupSeparator: '.', decimalSeparator: ',', prefix: 'R$ ', decimalScale: 2})}</td>
                   <td className="text-center">{mina.dt_sistema_f}</td>
                   <td className="text-center">
                     {mina.flag != 'C' &&

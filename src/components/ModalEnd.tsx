@@ -96,7 +96,8 @@ function ModalEnd({
 		}
 		let post = {
 			pagamento: type,
-			flag: type == 'D' || type == 'T' ? 'P' : 'A',
+			email:pagador.email,
+			flag: type != 'P' ? 'P' : 'A',
 			id_local: 1,
 			nome: pagador.nome,
 			cpf_cnpj: pagador.cpf.replaceAll('.', '').replace('-', ''),
@@ -108,6 +109,7 @@ function ModalEnd({
 			toast.success('Venda realizada com sucesso!')
 		} catch (error) {}
 		formikForm.current?.resetForm()
+		setServicosCart([])
 		setEnd(false)
 	}
 
